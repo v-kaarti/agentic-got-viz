@@ -3,28 +3,28 @@
 // 1. Shortest Path Algorithm
 const shortestPathData = {
     id: "root",
-    text: "What is the most efficient algorithm for finding the shortest path in a graph?",
+    text: "Which of the following best describes the balance the Supreme Court has struck between the Establishment Clause and the Free-Exercise Clause? A: Freedom of speech has few exceptions. B: Churches get tax-exempt status. C: Administrative agencies can be dissolved. D: State-sponsored prayer during school is prohibited, but voluntary prayer before/after school is allowed.",
     type: "input",
     children: [
         {
             id: "approach1",
-            text: "Let me consider different algorithms for finding shortest paths",
+            text: "Understanding the Establishment Clause",
             status: "productive",
             children: [
                 {
                     id: "approach1-1",
-                    text: "For unweighted graphs, BFS is optimal",
+                    text: "Understanding the Establishment Clause and the Free-Exercise Clause",
                     status: "productive",
                     children: [
                         {
                             id: "approach1-1-1",
-                            text: "BFS has O(V+E) time complexity",
+                            text: "Analyzing voluntary student-led prayer before school",
                             status: "productive",
                             children: []
                         },
                         {
                             id: "approach1-1-2",
-                            text: "BFS only works when all edges have equal weight",
+                            text: "Examining state-sponsored prayer prohibitions",
                             status: "productive",
                             children: []
                         }
@@ -32,31 +32,32 @@ const shortestPathData = {
                 },
                 {
                     id: "approach1-2",
-                    text: "For weighted graphs, we need different algorithms",
+                    text: "Analyzing state-sponsored prayer and the Establishment Clause",
                     status: "productive",
                     children: [
                         {
                             id: "approach1-2-1",
-                            text: "Dijkstra's algorithm for non-negative weights",
+                            text: "Government cannot establish religion",
                             status: "productive",
                             children: [
                                 {
                                     id: "approach1-2-1-1",
-                                    text: "Min-heap: O(E log V)",
+                                    text: "Establishment Clause prevents gov't endorsement",
                                     status: "productive",
                                     children: []
                                 },
                                 {
                                     id: "approach1-2-1-2",
-                                    text: "Array: O(V²)",
+                                    text: "Citizens are more free with religious constraints on gov't",
                                     status: "rejected",
+                                    rejectionReason: "Confuses freedom with constraint",
                                     children: []
                                 }
                             ]
                         },
                         {
                             id: "approach1-2-2",
-                            text: "Bellman-Ford for negative weights: O(VE)",
+                            text: "Free-Exercise Clause limitations on government",
                             status: "productive",
                             children: []
                         }
@@ -66,35 +67,83 @@ const shortestPathData = {
         },
         {
             id: "approach2",
-            text: "Could we use a modified DFS approach?",
-            status: "rejected",
+            text: "Understanding the Free-Exercise Clause",
+            status: "productive",
             children: [
                 {
                     id: "approach2-1",
-                    text: "DFS doesn't guarantee shortest paths",
+                    text: "Evaluating Option A: Freedom of speech exceptions",
                     status: "rejected",
+                    rejectionReason: "Not directly relevant to the balance",
+                    children: []
+                },
+                {
+                    id: "approach2-2",
+                    text: "Evaluating Option B: Tax-exempt status for churches",
+                    status: "rejected",
+                    rejectionReason: "Not the central issue in the balance",
                     children: []
                 }
             ]
         },
         {
             id: "approach3",
-            text: "What about dynamic programming?",
+            text: "Evaluating remaining options",
             status: "productive",
             children: [
                 {
                     id: "approach3-1",
-                    text: "Floyd-Warshall for all pairs: O(V³)",
-                    status: "productive",
+                    text: "Option C: Administrative agency dissolution",
+                    status: "rejected",
+                    rejectionReason: "Unrelated to religious clauses",
                     children: []
                 }
             ]
         },
         {
             id: "conclusion",
-            text: "For efficiency, Dijkstra's with min-heap is optimal for most cases",
+            text: "Option D:State-sponsored prayer during school is prohibited, but voluntary prayer before/after school is allowed",
             type: "output",
-            children: []
+            children: [
+                {
+                    id: "verification1",
+                    text: "Verify state-sponsored prayer prohibition",
+                    status: "productive",
+                    children: [
+                        {
+                            id: "verification1-1",
+                            text: "Supreme Court prohibits mandatory prayer in school (Engel v. Vitale)",
+                            status: "productive",
+                            children: []
+                        },
+                        {
+                            id: "verification1-2",
+                            text: "State cannot require prayer even if non-denominational",
+                            status: "productive",
+                            children: []
+                        }
+                    ]
+                },
+                {
+                    id: "verification2",
+                    text: "Verify voluntary prayer allowance",
+                    status: "productive",
+                    children: [
+                        {
+                            id: "verification2-1",
+                            text: "Students can pray voluntarily (Tinker v. Des Moines)",
+                            status: "productive",
+                            children: []
+                        },
+                        {
+                            id: "verification2-2",
+                            text: "Prayer clubs allowed before/after school (Equal Access Act)",
+                            status: "productive",
+                            children: []
+                        }
+                    ]
+                }
+            ]
         }
     ]
 };
@@ -437,9 +486,16 @@ const shortestPathSteps = [
     "approach1-2-2",
     "approach2",
     "approach2-1",
+    "approach2-2",
     "approach3",
     "approach3-1",
-    "conclusion"
+    "conclusion",
+    "verification1",
+    "verification1-1",
+    "verification1-2",
+    "verification2",
+    "verification2-1",
+    "verification2-2"
 ];
 
 const chessSteps = [

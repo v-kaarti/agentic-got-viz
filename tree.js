@@ -209,63 +209,41 @@ class TreeVisualization {
         svg.call(this.zoomBehavior.transform, this.initialTransform);
     }
     
-    showNodeDetails(d, event) {
-        // Clear all states before applying new ones
-        d3.selectAll(".node")
-            .classed("selected", false)
-            .classed("individual-focus", false)
-            .classed("current", false)
-            .classed("visited", false)
-            .classed("dimmed", true);
-        
-        d3.select(`#node-${d.data.id}`)
-            .classed("selected", true)
-            .classed("individual-focus", true)
-            .classed("dimmed", false);
-        
-        this.selectedNode = d;
-        
-        // Calculate zoom parameters to focus on node
-        const scale = 1.5;
-        const x = -d.x * scale + this.width / 2;
-        const y = -d.y * scale + this.height / 3;
-        
-        // Show shadow overlay behind the nodes
-        d3.select(`#${this.containerId} .shadow-overlay`)
-            .transition()
-            .duration(500)
-            .style("opacity", 1);
-        
-        // Zoom to the node
-        d3.select(`#${this.containerId} svg`)
-            .transition()
-            .duration(750)
-            .call(this.zoomBehavior.transform, d3.zoomIdentity.translate(x, y).scale(scale));
-        
-        // Show node details
+    showNodeDetails(node) {
+        // Get the details container
         const detailsContainer = d3.select(`#${this.containerId} .node-details-container`);
         
-        // Create details HTML with X button (not gavel)
+        // Create HTML for the details panel
         let detailsHTML = `
             <div class="details-header">
                 <h3>Node Details</h3>
                 <button class="details-close">&times;</button>
             </div>
             <div class="details-content">
-                <p class="details-text">${d.data.text}</p>
+                <p class="details-text">${node.data.text}</p>
                 <div class="details-metadata">
                     <div class="metadata-item">
-                        <span class="metadata-label">Status:</span>
-                        <span class="status-${d.data.status || 'neutral'}">${d.data.status || 'neutral'}</span>
+                        <span class="metadata-label">Type:</span>
+                        <span>${node.data.type || 'thought'}</span>
                     </div>
                     <div class="metadata-item">
-                        <span class="metadata-label">Type:</span>
-                        <span>${d.data.type || 'thought'}</span>
+                        <span class="metadata-label">Status:</span>
+                        <span>${node.data.status || 'neutral'}</span>
                     </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">Depth:</span>
+                        <span>${node.depth}</span>
+                    </div>
+                    ${node.data.rejectionReason ? 
+                      `<div class="metadata-item rejection-reason">
+                          <span class="metadata-label">Rejection Reason:</span>
+                          <span>${node.data.rejectionReason}</span>
+                       </div>` : ''}
                 </div>
             </div>
         `;
         
+        // Update and show the details container
         detailsContainer.html(detailsHTML)
             .style("display", "block")
             .style("opacity", 0)
@@ -273,13 +251,19 @@ class TreeVisualization {
             .duration(300)
             .style("opacity", 1);
         
-        // Add close button event listener
+        // Add event listener to close button
         detailsContainer.select(".details-close")
-            .on("click", () => this.resetZoom());
-        
-        // Reset traversal state when showing individual node
-        this.currentStepIndex = -1;
-        this.highlightedNodes.clear();
+            .on("click", () => {
+                detailsContainer.transition()
+                    .duration(300)
+                    .style("opacity", 0)
+                    .on("end", function() {
+                        d3.select(this).style("display", "none");
+                    });
+                
+                // Remove any focus highlighting
+                d3.selectAll(".node").classed("individual-focus", false);
+            });
     }
     
     resetZoom() {
@@ -838,31 +822,10 @@ class TreeVisualization {
     
     // New method to show details for an entire layer
     showLayerDetails(nodesInLayer, layerIndex, deletedNodes = []) {
+        // Get the details container
         const detailsContainer = d3.select(`#${this.containerId} .node-details-container`);
         
-        // Get layer description based on depth
-        let layerTitle;
-        switch(layerIndex) {
-            case 0:
-                layerTitle = "Root Question";
-                break;
-            case 1:
-                layerTitle = "Initial Approaches";
-                break;
-            case 2:
-                layerTitle = "Specific Considerations";
-                break;
-            case 3:
-                layerTitle = "Detailed Analysis";
-                break;
-            case 4:
-                layerTitle = "Implementation Details";
-                break;
-            default:
-                layerTitle = `Layer ${layerIndex}`;
-        }
-        
-        // Count nodes by status
+        // Calculate status counts
         const statusCounts = {
             productive: 0,
             neutral: 0,
@@ -871,12 +834,24 @@ class TreeVisualization {
         
         nodesInLayer.forEach(node => {
             const status = node.data.status || "neutral";
-            if (statusCounts[status] !== undefined) {
-                statusCounts[status]++;
-            }
+            statusCounts[status] = (statusCounts[status] || 0) + 1;
         });
         
-        // Create list of node texts
+        // Get the layer title - use the first node text to represent the layer
+        const layerDepth = nodesInLayer[0].depth;
+        let layerTitle = "Root";
+        
+        if (layerDepth > 0) {
+            // Use the parent's name to describe the layer
+            const parent = nodesInLayer[0].parent;
+            if (parent && parent.data.text) {
+                layerTitle = parent.data.text.length > 30 
+                    ? parent.data.text.substring(0, 30) + "..." 
+                    : parent.data.text;
+            }
+        }
+        
+        // Create HTML for node list
         let nodesList = "";
         nodesInLayer.forEach(node => {
             const status = node.data.status || "neutral";
@@ -1580,7 +1555,7 @@ class TreeVisualization {
             
         this.addInfoSection(sidebar, "How It Works", 
             "1. <strong>Problem Decomposition:</strong> Complex problems are split into manageable, pairwise disjoint subproblems that can be solved more easily.<br><br>" +
-            "2. <strong>Verification:</strong> Judge models evaluate whether the decomposition is coherent and appropriate, either terminating the branching process or continuing.<br><br>" +
+            "2. <strong>Verification:</strong> Judge models evaluate whether the decomposition is coherent, appropriate, and accurate, either terminating the branching process or continuing. If the judge model catches an inconsistency, it is given privelege to override the main model<br><br>" +
             "3. <strong>Recursive Solution:</strong> The process repeats for complex subproblems until reaching atomic tasks, smaller-one shot tasks, that can be solved directly.<br><br>" +
             "4. <strong>Backpropagation:</strong> Results from subproblems are propagated up the graph to create the final solution.");
             
@@ -1591,10 +1566,13 @@ class TreeVisualization {
             
         // Add "Did you know" boxes
         this.addDidYouKnow(sidebar, 
-            "AGT ");
+            "Qualitatively, AGT tends to catch itself mid-fallacy more than traditional prompting.");
         
         this.addDemo(sidebar, 
-            "Step through the tree see to AGT.");
+            "Step through the tree see to AGT in action.");
+        
+            this.addDemo(sidebar, 
+                "Click on individual nodes to learn more about them.");
 
         // Add author links to the navigation bar instead of floating div
         this.addAuthorLinks();
