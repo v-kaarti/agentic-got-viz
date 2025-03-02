@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tree of Thoughts Visualization</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>Agentic Graph-of-Thought (GoT)</h1>
+    </nav>
+    
+    <div class="main-container">
+        <div class="app-container">
+            <aside class="sidebar">
+                <h2>Input</h2>
+                <div class="input-container">
+                    <div class="select-wrapper">
+                        <label for="preset-prompts">Choose a preset prompt:</label>
+                        <select id="preset-prompts" class="preset-select">
+                            <option value="">Select a preset prompt...</option>
+                            <option value="shortest-path">What is the most efficient algorithm for finding the shortest path in a graph?</option>
+                            <option value="chess-move">What's the best next move in this chess position: e4 e5, Nf3 Nc6, Bb5?</option>
+                            <option value="math-problem">How would you solve the equation: 3x² + 8x - 5 = 0?</option>
+                            <option value="medical-diagnosis">What are possible diagnoses for symptoms of fever, headache, and fatigue?</option>
+                        </select>
+                    </div>
+                    <textarea id="prompt-input" placeholder="Enter your prompt here or select a preset above..."></textarea>
+                </div>
+                
+                <h2>Visualization Settings</h2>
+                <div class="settings-container">
+                    <div class="setting-item">
+                        <label for="thought-count">Number of thoughts:</label>
+                        <select id="thought-count" class="select">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <label for="depth-level">Max depth:</label>
+                        <select id="depth-level" class="select">
+                            <option value="2">2</option>
+                            <option value="3" selected>3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="visualization-legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #dcfce7;"></div>
+                        <span>Explored node</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #10b981;"></div>
+                        <span>Active node</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #f1f5f9;"></div>
+                        <span>Unexplored node</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #0ea5e9;"></div>
+                        <span>Input/Output</span>
+                    </div>
+                </div>
+            </aside>
+            
+            <main class="content-area">
+                <div class="controls-container">
+                    <div class="control-group">
+                        <button id="step-btn" class="button">
+                            <i class="ph ph-arrow-right"></i> Step
+                        </button>
+                        <button id="reset-btn" class="button">
+                            <i class="ph ph-arrow-counter-clockwise"></i> Reset
+                        </button>
+                        <button id="play-btn" class="button button-success">
+                            <i class="ph ph-play"></i> Play Animation
+                        </button>
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label for="speed-control">Speed:</label>
+                        <input type="range" id="speed-control" min="1" max="10" value="5">
+                    </div>
+                </div>
+                
+                <div class="visualization-panel">
+                    <h3 class="visualization-title">Parallel Thinking</h3>
+                    <div class="visualization-container">
+                        <div id="parallel-tree-container"></div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+
+
+    <script src="preset-data.js"></script>
+    <script src="tree.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
