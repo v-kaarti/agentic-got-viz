@@ -1555,7 +1555,7 @@ class TreeVisualization {
             
         this.addInfoSection(sidebar, "How It Works", 
             "1. <strong>Problem Decomposition:</strong> Complex problems are split into manageable, pairwise disjoint subproblems that can be solved more easily.<br><br>" +
-            "2. <strong>Verification:</strong> Judge models evaluate whether the decomposition is coherent, appropriate, and accurate, either terminating the branching process or continuing. If the judge model catches an inconsistency, it is given privelege to override the main model<br><br>" +
+            "2. <strong>Verification:</strong> Judge models evaluate whether the decomposition is coherent, appropriate, and accurate, either terminating the branching process or continuing. If the judge model catches an inconsistency, it is given privilege to override the main model<br><br>" +
             "3. <strong>Recursive Solution:</strong> The process repeats for complex subproblems until reaching atomic tasks, smaller-one shot tasks, that can be solved directly.<br><br>" +
             "4. <strong>Backpropagation:</strong> Results from subproblems are propagated up the graph to create the final solution.");
             
